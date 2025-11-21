@@ -9,6 +9,8 @@ export default defineConfig({
         dts({
             insertTypesEntry: true,
             tsConfigFilePath: path.resolve(__dirname, 'tsconfig.json'),
+            exclude: ['**/*.vue'],
+            include: ['src/**/*.ts', 'src/**/*.d.ts']
         })
     ],
     root: 'examples',
