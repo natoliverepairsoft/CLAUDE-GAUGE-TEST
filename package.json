@@ -1,10 +1,18 @@
 {
     "name": "sport-gauge",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "A customizable, sports-car inspired gauge component.",
     "main": "dist/sport-gauge.umd.js",
     "module": "dist/sport-gauge.mjs",
-    "types": "dist/Gauge.vue.d.ts",
+    "types": "dist/sport-gauge.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/sport-gauge.d.ts",
+            "import": "./dist/sport-gauge.mjs",
+            "require": "./dist/sport-gauge.umd.js"
+        },
+        "./style.css": "./dist/style.css"
+    },
     "files": [
         "dist",
         "README.md"

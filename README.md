@@ -10,10 +10,16 @@ npm install sport-gauge
 
 ## Usage
 
-1.  **Import**: Import the component in your Vue app.
+1.  **Import**: Import the component and styles in your Vue app.
 
 ```javascript
+// Named import (recommended)
+import { Gauge } from 'sport-gauge';
+import 'sport-gauge/style.css';
+
+// Or default import
 import Gauge from 'sport-gauge';
+import 'sport-gauge/style.css';
 ```
 
 2.  **Template**: Use the component.

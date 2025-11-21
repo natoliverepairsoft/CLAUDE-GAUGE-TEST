@@ -24,7 +24,7 @@ export default defineConfig({
     build: {
         outDir: '../dist',
         lib: {
-            entry: path.resolve(__dirname, 'src/Gauge.vue'),
+            entry: path.resolve(__dirname, 'src/index.ts'),
             name: 'SportGauge',
             fileName: 'sport-gauge'
         },
