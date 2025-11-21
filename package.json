@@ -1,6 +1,6 @@
 {
     "name": "sport-gauge",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A customizable, sports-car inspired gauge component.",
     "main": "dist/sport-gauge.umd.js",
     "module": "dist/sport-gauge.mjs",
