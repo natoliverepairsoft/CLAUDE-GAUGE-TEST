@@ -66,54 +66,41 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, watch, toRefs } from 'vue';
 import anime from 'animejs';
 
-const props = defineProps({
-  modelValue: {
-    type: Number,
-    default: 0
-  },
-  min: {
-    type: Number,
-    default: 0
-  },
-  max: {
-    type: Number,
-    default: 100
-  },
-  title: {
-    type: String,
-    default: ''
-  },
-  unit: {
-    type: String,
-    default: ''
-  },
-  color: {
-    type: String,
-    default: '#ff3b30'
-  },
-  logo: {
-    type: String,
-    default: ''
-  },
-  interactive: {
-    type: Boolean,
-    default: true
-  }
+interface Props {
+  modelValue?: number;
+  min?: number;
+  max?: number;
+  title?: string;
+  unit?: string;
+  color?: string;
+  logo?: string;
+  interactive?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: 0,
+  min: 0,
+  max: 100,
+  title: '',
+  unit: '',
+  color: '#ff3b30',
+  logo: '',
+  interactive: true
 });
 
-const emit = defineEmits(['update:modelValue']);
+// const emit = defineEmits(['update:modelValue']); // Unused for now but good practice
 
 const { max } = toRefs(props);
 
 // Refs
-const container = ref(null);
-const gaugeProgress = ref(null);
-const needle = ref(null);
-const gaugeValueText = ref(null);
+const container = ref<HTMLElement | null>(null);
+const gaugeProgress = ref<SVGPathElement | null>(null);
+const needle = ref<HTMLElement | null>(null);
+const gaugeValueText = ref<SVGTextElement | null>(null);
 
 // State
 const currentDisplayValue = ref(props.modelValue);
@@ -130,7 +117,7 @@ const GAUGE_DRAW_CONFIG = {
 };
 
 // Helpers
-const polarToCartesian = (centerX, centerY, radius, angleInDegrees) => {
+const polarToCartesian = (centerX: number, centerY: number, radius: number, angleInDegrees: number) => {
   const angleInRadians = (angleInDegrees - 90) * Math.PI / 180.0;
   return {
     x: centerX + (radius * Math.cos(angleInRadians)),
@@ -138,7 +125,7 @@ const polarToCartesian = (centerX, centerY, radius, angleInDegrees) => {
   };
 };
 
-const describeArc = (x, y, radius, startAngle, endAngle) => {
+const describeArc = (x: number, y: number, radius: number, startAngle: number, endAngle: number) => {
   const start = polarToCartesian(x, y, radius, startAngle);
   const end = polarToCartesian(x, y, radius, endAngle);
   const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
@@ -215,7 +202,7 @@ const numbers = computed(() => {
 });
 
 // Animation Logic
-const updateVisuals = (value, duration = 1500) => {
+const updateVisuals = (value: number, duration = 1500) => {
   const percentage = Math.min(value / max.value, 1);
 
   // Value Text
@@ -246,10 +233,12 @@ const updateVisuals = (value, duration = 1500) => {
       easing: duration > 0 ? 'easeOutCubic' : 'linear',
       duration: duration,
       complete: () => {
-        if (percentage > 0.8) {
-          gaugeProgress.value.classList.add('red-zone');
-        } else {
-          gaugeProgress.value.classList.remove('red-zone');
+        if (gaugeProgress.value) { // Check existence again
+            if (percentage > 0.8) {
+            gaugeProgress.value.classList.add('red-zone');
+            } else {
+            gaugeProgress.value.classList.remove('red-zone');
+            }
         }
       }
     });
@@ -272,10 +261,13 @@ const updateVisuals = (value, duration = 1500) => {
 };
 
 // Interaction
-const handleMouseMove = (e) => {
-  if (!props.interactive) return;
+const handleMouseMove = (e: MouseEvent) => {
+  if (!props.interactive || !container.value) return;
   
-  const rect = container.value.querySelector('.gauge-bg-arc').getBoundingClientRect(); // Use arc for better centering reference
+  const arc = container.value.querySelector('.gauge-bg-arc');
+  if (!arc) return;
+
+  const rect = arc.getBoundingClientRect();
   const centerX = rect.left + rect.width / 2;
   const centerY = rect.top + rect.height / 2;
 
@@ -301,7 +293,6 @@ const handleMouseMove = (e) => {
   const value = percentage * max.value;
 
   updateVisuals(value, 0);
-  // Optional: emit('update:modelValue', value); // If we want to update the prop live
 };
 
 const handleMouseLeave = () => {
